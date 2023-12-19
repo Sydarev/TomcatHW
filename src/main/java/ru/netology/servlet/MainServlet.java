@@ -12,6 +12,8 @@ import java.io.IOException;
 
 public class MainServlet extends HttpServlet {
     private PostController controller;
+    private static String path;
+    private static String method;
 
     @Override
     public void init() { //инициализация зависимости
@@ -24,9 +26,8 @@ public class MainServlet extends HttpServlet {
     protected void service(HttpServletRequest req, HttpServletResponse resp) { //диспетчеризация запросов
         // если деплоились в root context, то достаточно этого
         try {
-            final var path = req.getRequestURI(); //получаем путь
-            final var method = req.getMethod(); //получаем метод запроса
-//            final var id = Long.parseLong(path.substring(path.lastIndexOf("/")+1));
+            path = req.getRequestURI(); //получаем путь
+            method = req.getMethod(); //получаем метод запроса
             // primitive routing ищем метод запроса через кучу ифов
             if (method.equals("GET") && path.equals("/api/posts")) {
                 controller.all(resp);

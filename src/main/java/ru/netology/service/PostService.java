@@ -6,6 +6,7 @@ import ru.netology.repository.PostRepository;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class PostService {
   private final PostRepository repository;
@@ -14,7 +15,7 @@ public class PostService {
     this.repository = repository;
   }
 
-  public List<Post> all() {
+  public Map<Long, Post> all() {
     return repository.all();
   }
 

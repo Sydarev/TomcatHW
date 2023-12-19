@@ -2,59 +2,43 @@ package ru.netology.repository;
 
 import ru.netology.model.Post;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicLong;
 
 // Stub
 public class PostRepository {
 
-    private final List<Post> posts = new CopyOnWriteArrayList<>();
-    private static int count = 1;
+    private final Map<Long, Post> posts = new ConcurrentHashMap<>();
+    private static AtomicLong count = new AtomicLong(1);
 
-    public List<Post> all() {
+    public Map<Long, Post> all() {
         return posts;
     }
 
     public Optional<Post> getById(long id) {
-        for(Post entry: posts){
-            if(entry.getId() == id){
-                return Optional.of(entry);
-            }
-        }
-        return Optional.empty();
+        return Optional.of(posts.get(id));
     }
 
     public Post save(Post post) {
         if (post.getId() == 0) {
-            post.setId(count);
-            if(!posts.contains(post)) posts.add(post);
-            count++;
+            post.setId(count.get());
+            if (!posts.containsValue(post)) posts.put(post.getId(), post);
+            count.incrementAndGet();
             return post;
         }
-        if (count == 1){
-            posts.add(post);
-            count++;
+        if (count.get() == 1) {
+            posts.put(post.getId(), post);
+            count.incrementAndGet();
             return post;
         }
-        for(Post entry: posts){
-            if(entry.getId() == post.getId()){
-                entry.setContent(post.getContent());
-                return post;
-            }
-        }
-        posts.add(post);
-        count++;
+        posts.put(post.getId(), post);
+        count.incrementAndGet();
         return post;
     }
 
     public void removeById(long id) {
-        for(Post entry: posts){
-            if(entry.getId() == id){
-                posts.remove(entry);
-            }
-        }
+        posts.remove(id);
     }
 }
