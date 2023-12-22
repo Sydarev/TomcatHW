@@ -19,8 +19,7 @@ public class MainServlet extends HttpServlet {
     @Override
     public void init() { //инициализация зависимости
         final var context = new AnnotationConfigApplicationContext("ru.netology");
-        final var service = context.getBean("postService");
-        final var controller = context.getBean(PostController.class);
+        controller = context.getBean(PostController.class);
     }
 
     @Override
