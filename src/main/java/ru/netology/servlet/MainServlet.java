@@ -17,6 +17,10 @@ public class MainServlet extends HttpServlet {
     private PostController controller;
     private static String path;
     private static String method;
+    private static final String GET = "GET";
+    private static final String POST = "POST";
+    private static final String DELETE = "DELETE";
+    private static final String PATH = "/api/posts";
 
     @Override
     public void init() { //инициализация зависимости
@@ -31,21 +35,21 @@ public class MainServlet extends HttpServlet {
             path = req.getRequestURI(); //получаем путь
             method = req.getMethod(); //получаем метод запроса
             // primitive routing ищем метод запроса через кучу ифов
-            if (method.equals("GET") && path.equals("/api/posts")) {
+            if (method.equals(GET) && path.equals(PATH)) {
                 controller.all(resp);
                 return;
             }
-            if (method.equals("GET") && path.matches("/api/posts/\\d+")) {
+            if (method.equals(GET) && path.matches(PATH+"/\\d+")) {
                 // easy way
                 final var id = Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
                 controller.getById(id, resp);
                 return;
             }
-            if (method.equals("POST") && path.equals("/api/posts")) {
+            if (method.equals(POST) && path.equals(PATH)) {
                 controller.save(req.getReader(), resp);
                 return;
             }
-            if (method.equals("DELETE") && path.matches("/api/posts/\\d+")) {
+            if (method.equals(DELETE) && path.matches(PATH+"/\\d+")) {
                 // easy way
                 final var id = Long.parseLong(path.substring(path.lastIndexOf("/") + 1));
                 controller.removeById(id, resp);
