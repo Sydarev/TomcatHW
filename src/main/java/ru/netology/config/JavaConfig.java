@@ -11,12 +11,14 @@ public class JavaConfig {
     public PostService postService(PostRepository repository) {
         return new PostService(repository);
     }
+
     @Bean
-    public PostRepository postRepository(){
+    public PostRepository postRepository() {
         return new PostRepository();
     }
+
     @Bean
-    public PostController postController(PostService service){
+    public PostController postController(PostService service) {
         return new PostController(service);
     }
 }
