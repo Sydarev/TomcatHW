@@ -7,6 +7,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
+
 @Repository
 public class PostRepository {
 
@@ -14,10 +15,18 @@ public class PostRepository {
     private static AtomicLong count = new AtomicLong(1);
 
     public Map<Long, Post> all() {
-        return posts;
+        Map<Long, Post> resp = new HashMap<>();
+        for (Map.Entry<Long, Post> entry : posts.entrySet()){
+            if (!entry.getValue().isRemoved()){
+                resp.put(entry.getKey(), entry.getValue());
+            }
+        }
+            return resp;
     }
 
     public Optional<Post> getById(long id) {
+        var flag = posts.get(id).isRemoved();
+        if(flag) return null;
         return Optional.of(posts.get(id));
     }
 
@@ -39,6 +48,6 @@ public class PostRepository {
     }
 
     public void removeById(long id) {
-        posts.remove(id);
+        posts.get(id).setRemoved(true);
     }
 }
