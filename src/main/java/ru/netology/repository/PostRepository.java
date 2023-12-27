@@ -1,6 +1,7 @@
 package ru.netology.repository;
 
 import org.springframework.stereotype.Repository;
+import ru.netology.exception.NotFoundException;
 import ru.netology.model.Post;
 
 import java.util.*;
@@ -15,19 +16,30 @@ public class PostRepository {
     private static AtomicLong count = new AtomicLong(1);
 
     public Map<Long, Post> all() {
-        return posts;
+        Map<Long, Post> resp = new HashMap<>();
+        for (Map.Entry<Long, Post> entry : posts.entrySet()) {
+            if (!entry.getValue().isRemoved()) {
+                resp.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return resp;
     }
 
     public Optional<Post> getById(long id) {
+        if (posts.get(id).isRemoved()) return null;
         return Optional.of(posts.get(id));
     }
 
     public Post save(Post post) {
+
         if (post.getId() == 0) {
             post.setId(count.get());
             if (!posts.containsValue(post)) posts.put(post.getId(), post);
             count.incrementAndGet();
             return post;
+        }
+        if (count.get() > 1 && posts.get(post.getId()).isRemoved()) {
+            throw new NotFoundException();
         }
         if (count.get() == 1) {
             posts.put(post.getId(), post);
@@ -40,6 +52,6 @@ public class PostRepository {
     }
 
     public void removeById(long id) {
-        posts.remove(id);
+        posts.get(id).setRemoved(true);
     }
 }
